@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="empty_cell">Empty cell</string>
+    <string name="dice_with_value_1">Dice with a value of 1</string>
+    <string name="dice_with_value_2">Dice with a value of 2</string>
+    <string name="dice_with_value_3">Dice with a value of 3</string>
+    <string name="dice_with_value_4">Dice with a value of 4</string>
+    <string name="dice_with_value_5">Dice with a value of 5</string>
+    <string name="dice_with_value_6">Dice with a value of 6</string>
+</resources>

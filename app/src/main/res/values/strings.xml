@@ -1,0 +1,34 @@
+<resources>
+    <string name="app_name">Dicing</string>
+    <string name="player_format_won_the_game">Player %d won the game.</string>
+    <string name="play_again">Play again</string>
+    <string name="back_to_menu">Back to menu</string>
+    <string name="two_players">Two players</string>
+    <string name="play">Play</string>
+    <string name="select_difficulty">Select difficulty</string>
+    <string name="okay">Okay</string>
+    <string name="player_format_moves">Player %d moves!</string>
+    <string name="rules">Rules</string>
+    <string name="rules_description_part_1">
+        The player who will move first is randomly determined. In the game, you can notice 3 objects:
+        the playing field of the first player, the playing field of the second player and the status bar.
+    </string>
+    <string name="rules_description_part_2">
+        When 2 identical dices become one line horizontally, vertically and diagonally, then you get a
+        bonus, depending on the number of dices in the line. 2 dices will give a bonus of 3 * [dice value];
+        3 dices gives a bonus of 5 * [dice value].
+    </string>
+    <string name="rules_description_part_3">
+        If the opponent has dices with the value of X in the cells on the same vertical and you put the
+        dice with the value of X on the same vertical in your cell, then the opponent\'s dices are removed.
+        Similar rules apply to the opponent. The game ends when one of the players occupies all the cells
+        of his field. The winner is the player who scored the most points after the end of the game.
+    </string>
+    <string name="playing_field_preview_below">Playing field preview below:</string>
+    <string name="status_bar_preview_below">Status bar preview below:</string>
+    <string name="warning">Warning</string>
+    <string name="easy">Easy</string>
+    <string name="normal">Normal</string>
+    <string name="hard">Hard</string>
+    <string name="unavailable">Unavailable</string>
+</resources>
