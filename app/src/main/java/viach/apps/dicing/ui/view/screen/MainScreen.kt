@@ -13,7 +13,7 @@ import viach.apps.dicing.model.Screen
 
 @Composable
 fun MainScreen(
-    userVsUserGame: Game = get(GameType.USER_VS_USER.qualifier),
+    userVsUserGameFactory: @Composable () -> Game = { get(GameType.USER_VS_USER.qualifier) },
     userVsAiGame: Game = get(GameType.USER_VS_AI.qualifier),
     easyAI: AI = get(AIDifficulty.EASY.qualifier),
     normalAI: AI = get(AIDifficulty.NORMAL.qualifier),
@@ -58,13 +58,13 @@ fun MainScreen(
         }
         composable(Screen.TwoPlayersGame.route) {
             GameScreen(
-                game = userVsUserGame,
+                game = userVsUserGameFactory(),
                 onBackToMenuIntent = { navController.popBackStack() }
             )
         }
         composable(Screen.Rules.route) {
             RulesScreen(
-                game = userVsUserGame,
+                game = userVsUserGameFactory(),
                 onBackToMenuIntent = { navController.popBackStack() }
             )
         }
