@@ -106,6 +106,7 @@ private fun PortraitScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(horizontal = 32.dp)
                 .verticalScroll(scrollState)
         ) {
             GameBar(
@@ -173,6 +174,7 @@ private fun LandscapeScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(horizontal = 32.dp)
                 .verticalScroll(scrollState)
         ) {
             Row(modifier = Modifier.fillMaxWidth()) {
