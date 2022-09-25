@@ -118,7 +118,7 @@ private fun PortraitScreen(
                 if (game.isPlayerMove(1)) {
                     val newGame = game.makeMove(position, 1).createNextDice()
                     onGameChange(newGame)
-                    if (ai != null && !game.gameOver) {
+                    if (ai != null && !newGame.gameOver) {
                         coroutineScope.launch {
                             delay(1000)
                             val newAI = ai.updateGame(newGame).makeMove()
@@ -193,7 +193,7 @@ private fun LandscapeScreen(
                         if (game.isPlayerMove(1)) {
                             val newGame = game.makeMove(position, 1).createNextDice()
                             onGameChange(newGame)
-                            if (ai != null && !game.gameOver) {
+                            if (ai != null && !newGame.gameOver) {
                                 coroutineScope.launch {
                                     delay(1000)
                                     val newAI = ai.updateGame(newGame).makeMove()
