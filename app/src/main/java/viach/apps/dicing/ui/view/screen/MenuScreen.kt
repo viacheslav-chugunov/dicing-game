@@ -22,6 +22,7 @@ import viach.apps.dicing.ui.view.component.VerticalSpacer
 fun MenuScreen(
     onPlayOpenIntent: (AIDifficulty) -> Unit,
     onTwoPlayersOpenIntent: () -> Unit,
+    onStatsOpenIntent: () -> Unit,
     onRulesOpenIntent: () -> Unit,
 ) {
     var showAIDifficultyDialog by rememberSaveable { mutableStateOf(false) }
@@ -64,6 +65,11 @@ fun MenuScreen(
         MaxWidthButton(
             textRes = R.string.two_players,
             onClick = onTwoPlayersOpenIntent
+        )
+        VerticalSpacer(16.dp)
+        MaxWidthButton(
+            textRes = R.string.stats,
+            onClick = onStatsOpenIntent
         )
         VerticalSpacer(16.dp)
         MaxWidthButton(

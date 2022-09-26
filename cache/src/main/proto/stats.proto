@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+option java_package = "viach.apps.cache";
+option java_multiple_files = true;
+
+message StatsPreferences {
+  int32 easyModeWinsCount = 1;
+  int32 normalModeWinsCount = 2;
+  int32 hardModeWinsCount = 3;
+  int32 easyModeLossesCount = 4;
+  int32 normalModeLossesCount = 5;
+  int32 hardModeLossesCount = 6;
+}

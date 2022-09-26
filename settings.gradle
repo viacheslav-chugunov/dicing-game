@@ -16,3 +16,4 @@ rootProject.name = "Dicing"
 include ':app'
 include ':dicing'
 include ':ai'
+include ':cache'

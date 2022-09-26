@@ -22,8 +22,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import viach.apps.ai.ai.AI
+import viach.apps.cache.status.StatsCache
 import viach.apps.dicing.game.Game
 import viach.apps.dicing.R
+import viach.apps.dicing.model.AIDifficulty
 import viach.apps.dicing.ui.view.component.*
 
 @SuppressLint("SwitchIntDef")
@@ -31,7 +33,9 @@ import viach.apps.dicing.ui.view.component.*
 @Composable
 fun GameScreen(
     game: Game,
+    stats: StatsCache,
     ai: AI? = null,
+    difficulty: AIDifficulty? = null,
     onBackToMenuIntent: () -> Unit
 ) {
     val context = LocalContext.current
@@ -45,7 +49,7 @@ fun GameScreen(
         val message = context.getString(R.string.player_format_moves, playerPosition)
         mutableStateOf<String?>(message)
     }
-
+    var scoreNotUpdated by rememberSaveable { mutableStateOf(difficulty != null) }
 
     message?.let {
         MessageDialog(
@@ -54,32 +58,66 @@ fun GameScreen(
         )
     }
 
-    when (orientation) {
-        Configuration.ORIENTATION_PORTRAIT -> {
-            PortraitScreen(
-                context = context,
-                coroutineScope = coroutineScope,
-                scrollState = scrollState,
-                game = game,
-                ai = ai,
-                onGameChange = { game = it },
-                onAIChange = { ai = it },
-                onMessageChange = { message = it },
-                onBackToMenuIntent = onBackToMenuIntent
-            )
+    if (game.gameOver) {
+        if (scoreNotUpdated) {
+            when (difficulty) {
+                AIDifficulty.EASY -> stats.addEasyWinLossPoint(game.wonPlayerPosition == 1)
+                AIDifficulty.NORMAL -> stats.addNormalWinLossPoint(game.wonPlayerPosition == 1)
+                AIDifficulty.HARD -> stats.addHardWinLossPoint(game.wonPlayerPosition == 1)
+                null -> {}
+            }
+            scoreNotUpdated = false
         }
-        Configuration.ORIENTATION_LANDSCAPE -> {
-            LandscapeScreen(
-                context = context,
-                coroutineScope = coroutineScope,
-                scrollState = scrollState,
-                game = game,
-                ai = ai,
-                onAIChange = { ai = it },
-                onGameChange = { game = it },
-                onMessageChange = { message = it },
-                onBackToMenuIntent = onBackToMenuIntent
+
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = stringResource(R.string.player_format_won_the_game, game.wonPlayerPosition!!),
+                modifier = Modifier.padding(32.dp),
+                style = MaterialTheme.typography.body2
             )
+            MaxWidthButton(
+                textRes = R.string.play_again,
+                onClick = { game = game.newGame }
+            )
+            VerticalSpacer(16.dp)
+            MaxWidthButton(
+                textRes = R.string.back_to_menu,
+                onClick = onBackToMenuIntent
+            )
+            VerticalSpacer(16.dp)
+        }
+    } else {
+        when (orientation) {
+            Configuration.ORIENTATION_PORTRAIT -> {
+                PortraitScreen(
+                    context = context,
+                    coroutineScope = coroutineScope,
+                    scrollState = scrollState,
+                    game = game,
+                    ai = ai,
+                    onGameChange = { game = it },
+                    onAIChange = { ai = it },
+                    onMessageChange = { message = it },
+                    onBackToMenuIntent = onBackToMenuIntent
+                )
+            }
+            Configuration.ORIENTATION_LANDSCAPE -> {
+                LandscapeScreen(
+                    context = context,
+                    coroutineScope = coroutineScope,
+                    scrollState = scrollState,
+                    game = game,
+                    ai = ai,
+                    onAIChange = { ai = it },
+                    onGameChange = { game = it },
+                    onMessageChange = { message = it },
+                    onBackToMenuIntent = onBackToMenuIntent
+                )
+            }
         }
     }
 }
@@ -96,57 +134,50 @@ private fun PortraitScreen(
     onMessageChange: (String?) -> Unit,
     onBackToMenuIntent: () -> Unit
 ) {
-    if (game.gameOver) {
-        GameOver(
-            game = game,
-            onGameChange = onGameChange,
-            onBackToMenuIntent = onBackToMenuIntent
-        )
-    } else {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 32.dp)
-                .verticalScroll(scrollState)
-        ) {
-            GameBar(
-                gameField = game.getGameField(1),
-                rowCellsCount =  3,
-                layoutPadding = PaddingValues(16.dp),
-                itemPadding = PaddingValues(8.dp)
-            ) { position ->
-                if (game.isPlayerMove(1)) {
-                    val newGame = game.makeMove(position, 1).createNextDice()
-                    onGameChange(newGame)
-                    if (ai != null && !newGame.gameOver) {
-                        coroutineScope.launch {
-                            delay(1000)
-                            val newAI = ai.updateGame(newGame).makeMove()
-                            onAIChange(newAI)
-                            onGameChange(newAI.game.createNextDice())
-                        }
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 32.dp)
+            .verticalScroll(scrollState),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        GameBar(
+            gameField = game.getGameField(1),
+            rowCellsCount =  3,
+            layoutPadding = PaddingValues(16.dp),
+            itemPadding = PaddingValues(8.dp)
+        ) { position ->
+            if (game.isPlayerMove(1)) {
+                val newGame = game.makeMove(position, 1).createNextDice()
+                onGameChange(newGame)
+                if (ai != null && !newGame.gameOver) {
+                    coroutineScope.launch {
+                        delay(1000)
+                        val newAI = ai.updateGame(newGame).makeMove()
+                        onAIChange(newAI)
+                        onGameChange(newAI.game.createNextDice())
                     }
-                } else {
-                    onMessageChange(context.getString(R.string.player_format_moves, 2))
                 }
+            } else {
+                onMessageChange(context.getString(R.string.player_format_moves, 2))
             }
-            StatusBar(
-                leftScore = game.getGameField(1).score,
-                rightScore = game.getGameField(2).score,
-                dice = game.nextDice
-            )
-            GameBar(
-                gameField = game.getGameField(2),
-                rowCellsCount =  3,
-                layoutPadding = PaddingValues(16.dp),
-                itemPadding = PaddingValues(8.dp),
-                itemsClickable = ai == null
-            ) { position ->
-                if (game.isPlayerMove(2)) {
-                    onGameChange(game.makeMove(position, 2).createNextDice())
-                } else {
-                    onMessageChange(context.getString(R.string.player_format_moves, 1))
-                }
+        }
+        StatusBar(
+            leftScore = game.getGameField(1).score,
+            rightScore = game.getGameField(2).score,
+            dice = game.nextDice
+        )
+        GameBar(
+            gameField = game.getGameField(2),
+            rowCellsCount =  3,
+            layoutPadding = PaddingValues(16.dp),
+            itemPadding = PaddingValues(8.dp),
+            itemsClickable = ai == null
+        ) { position ->
+            if (game.isPlayerMove(2)) {
+                onGameChange(game.makeMove(position, 2).createNextDice())
+            } else {
+                onMessageChange(context.getString(R.string.player_format_moves, 1))
             }
         }
     }
@@ -164,104 +195,68 @@ private fun LandscapeScreen(
     onMessageChange: (String?) -> Unit,
     onBackToMenuIntent: () -> Unit
 ) {
-    if (game.gameOver) {
-        GameOver(
-            game = game,
-            onGameChange = onGameChange,
-            onBackToMenuIntent = onBackToMenuIntent
-        )
-    } else {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 32.dp)
-                .verticalScroll(scrollState)
-        ) {
-            Row(modifier = Modifier.fillMaxWidth()) {
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .rotate(90f)
-                ) {
-                    GameBar(
-                        gameField = game.getGameField(1),
-                        rowCellsCount =  3,
-                        layoutPadding = PaddingValues(16.dp),
-                        itemPadding = PaddingValues(8.dp),
-                        iconRotation = -90f
-                    ) { position ->
-                        if (game.isPlayerMove(1)) {
-                            val newGame = game.makeMove(position, 1).createNextDice()
-                            onGameChange(newGame)
-                            if (ai != null && !newGame.gameOver) {
-                                coroutineScope.launch {
-                                    delay(1000)
-                                    val newAI = ai.updateGame(newGame).makeMove()
-                                    onAIChange(newAI)
-                                    onGameChange(newAI.game.createNextDice())
-                                }
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 32.dp)
+            .verticalScroll(scrollState),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Row(modifier = Modifier.fillMaxWidth()) {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .rotate(90f)
+            ) {
+                GameBar(
+                    gameField = game.getGameField(1),
+                    rowCellsCount =  3,
+                    layoutPadding = PaddingValues(16.dp),
+                    itemPadding = PaddingValues(8.dp),
+                    iconRotation = -90f
+                ) { position ->
+                    if (game.isPlayerMove(1)) {
+                        val newGame = game.makeMove(position, 1).createNextDice()
+                        onGameChange(newGame)
+                        if (ai != null && !newGame.gameOver) {
+                            coroutineScope.launch {
+                                delay(1000)
+                                val newAI = ai.updateGame(newGame).makeMove()
+                                onAIChange(newAI)
+                                onGameChange(newAI.game.createNextDice())
                             }
-                        } else {
-                            onMessageChange(context.getString(R.string.player_format_moves, 2))
                         }
-                    }
-                }
-                HorizontalSpacer(16.dp)
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .rotate(90f)
-                ) {
-                    GameBar(
-                        gameField = game.getGameField(2),
-                        rowCellsCount =  3,
-                        layoutPadding = PaddingValues(16.dp),
-                        itemPadding = PaddingValues(8.dp),
-                        iconRotation = -90f,
-                        itemsClickable = ai == null
-                    ) { position ->
-                        if (game.isPlayerMove(2)) {
-                            onGameChange(game.makeMove(position, 2).createNextDice())
-                        } else {
-                            onMessageChange(context.getString(R.string.player_format_moves, 1))
-                        }
+                    } else {
+                        onMessageChange(context.getString(R.string.player_format_moves, 2))
                     }
                 }
             }
-            StatusBar(
-                leftScore = game.getGameField(1).score,
-                rightScore = game.getGameField(2).score,
-                dice = game.nextDice
-            )
+            HorizontalSpacer(16.dp)
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .rotate(90f)
+            ) {
+                GameBar(
+                    gameField = game.getGameField(2),
+                    rowCellsCount =  3,
+                    layoutPadding = PaddingValues(16.dp),
+                    itemPadding = PaddingValues(8.dp),
+                    iconRotation = -90f,
+                    itemsClickable = ai == null
+                ) { position ->
+                    if (game.isPlayerMove(2)) {
+                        onGameChange(game.makeMove(position, 2).createNextDice())
+                    } else {
+                        onMessageChange(context.getString(R.string.player_format_moves, 1))
+                    }
+                }
+            }
         }
-    }
-}
-
-@Composable
-private fun GameOver(
-    game: Game,
-    onGameChange: (Game) -> Unit,
-    onBackToMenuIntent: () -> Unit
-) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = stringResource(R.string.player_format_won_the_game, game.wonPlayerPosition!!),
-            modifier = Modifier.padding(32.dp),
-            style = MaterialTheme.typography.body2
+        StatusBar(
+            leftScore = game.getGameField(1).score,
+            rightScore = game.getGameField(2).score,
+            dice = game.nextDice
         )
-        MaxWidthButton(
-            textRes = R.string.play_again,
-            onClick = { onGameChange(game.newGame) }
-        )
-        VerticalSpacer(16.dp)
-        MaxWidthButton(
-            textRes = R.string.back_to_menu,
-            onClick = onBackToMenuIntent
-        )
-        VerticalSpacer(16.dp)
     }
 }

@@ -4,6 +4,7 @@ import android.app.Application
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import viach.apps.dicing.di.aiModule
+import viach.apps.dicing.di.cacheModule
 import viach.apps.dicing.di.dicingModule
 
 class MainApplication : Application() {
@@ -14,7 +15,8 @@ class MainApplication : Application() {
             androidContext(this@MainApplication)
             modules(
                 dicingModule,
-                aiModule
+                aiModule,
+                cacheModule
             )
         }
     }

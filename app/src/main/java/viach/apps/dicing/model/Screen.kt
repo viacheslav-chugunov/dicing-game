@@ -9,5 +9,6 @@ sealed interface Screen {
     object PlayNormalGame : Base("Play Normal Game")
     object PlayHardGame : Base("Play Hard Game")
     object TwoPlayersGame : Base("Two Players Game")
+    object Stats : Base("Stats")
     object Rules : Base("Rules")
 }
