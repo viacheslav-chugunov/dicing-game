@@ -65,5 +65,5 @@ dependencies {
     implementation "io.insert-koin:koin-android:$koin_version"
     implementation "io.insert-koin:koin-androidx-compose:$koin_compose_version"
     testImplementation "io.insert-koin:koin-test-junit4:$koin_version"
-    implementation  "com.google.protobuf:protobuf-javalite:3.18.0"
+    implementation  "com.google.protobuf:protobuf-javalite:$protobuf_version"
 }

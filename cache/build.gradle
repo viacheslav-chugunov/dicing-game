@@ -35,9 +35,9 @@ dependencies {
     testImplementation "junit:junit:$junit_version"
     androidTestImplementation "androidx.test.ext:junit:$junit_ext_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
-    implementation 'androidx.datastore:datastore:1.0.0'
-    implementation  "com.google.protobuf:protobuf-javalite:3.18.0"
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
+    implementation "androidx.datastore:datastore:$datastore_version"
+    implementation  "com.google.protobuf:protobuf-javalite:$protobuf_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
 }
 
 protobuf {
