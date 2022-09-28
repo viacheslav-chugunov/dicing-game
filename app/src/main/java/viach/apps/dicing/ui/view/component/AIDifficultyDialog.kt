@@ -46,7 +46,7 @@ fun AIDifficultyDialog(
             MaxWidthButton(
                 textRes = R.string.normal,
                 onClick = {
-                    onDifficultySelected(AIDifficulty.EASY)
+                    onDifficultySelected(AIDifficulty.NORMAL)
                     onDismissIntent()
                 }
             )
@@ -54,7 +54,7 @@ fun AIDifficultyDialog(
             MaxWidthButton(
                 textRes = R.string.hard,
                 onClick = {
-                    onDifficultySelected(AIDifficulty.EASY)
+                    onDifficultySelected(AIDifficulty.HARD)
                     onDismissIntent()
                 }
             )

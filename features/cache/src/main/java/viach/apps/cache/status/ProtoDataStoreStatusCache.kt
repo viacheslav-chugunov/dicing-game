@@ -6,9 +6,7 @@ import androidx.datastore.dataStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import viach.apps.cache.StatsPreferences
 import java.io.IOException
@@ -18,6 +16,15 @@ class ProtoDataStoreStatusCache(
     private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 ) : StatsCache {
     private val preferences: DataStore<StatsPreferences> = context.preferences
+    private var actualPreferences: StatsPreferences = StatsPreferences.getDefaultInstance()
+
+    init {
+        coroutineScope.launch {
+            all.collectLatest { preferences ->
+                actualPreferences = preferences
+            }
+        }
+    }
 
     override val all: Flow<StatsPreferences>
         get() = preferences.data
@@ -33,27 +40,27 @@ class ProtoDataStoreStatusCache(
     override fun addEasyWinLossPoint(win: Boolean): Job =
         updatePreferences {
             if (win) {
-                setEasyModeWinsCount(all.first().easyModeWinsCount + 1)
+                setEasyModeWinsCount(actualPreferences.easyModeWinsCount + 1)
             } else {
-                setEasyModeLossesCount(all.first().easyModeLossesCount + 1)
+                setEasyModeLossesCount(actualPreferences.easyModeLossesCount + 1)
             }
         }
 
     override fun addNormalWinLossPoint(win: Boolean): Job =
         updatePreferences {
             if (win) {
-                setNormalModeWinsCount(all.first().normalModeWinsCount + 1)
+                setNormalModeWinsCount(actualPreferences.normalModeWinsCount + 1)
             } else {
-                setNormalModeLossesCount(all.first().normalModeLossesCount + 1)
+                setNormalModeLossesCount(actualPreferences.normalModeLossesCount + 1)
             }
         }
 
     override fun addHardWinLossPoint(win: Boolean): Job =
         updatePreferences {
             if (win) {
-                setHardModeWinsCount(all.first().hardModeWinsCount + 1)
+                setHardModeWinsCount(actualPreferences.hardModeWinsCount + 1)
             } else {
-                setHardModeLossesCount(all.first().hardModeLossesCount + 1)
+                setHardModeLossesCount(actualPreferences.hardModeLossesCount + 1)
             }
         }
 

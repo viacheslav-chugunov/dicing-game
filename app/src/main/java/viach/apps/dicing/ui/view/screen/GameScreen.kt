@@ -23,8 +23,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import viach.apps.ai.ai.AI
 import viach.apps.cache.status.StatsCache
-import viach.apps.dicing.game.Game
 import viach.apps.dicing.R
+import viach.apps.dicing.game.Game
 import viach.apps.dicing.model.AIDifficulty
 import viach.apps.dicing.ui.view.component.*
 
