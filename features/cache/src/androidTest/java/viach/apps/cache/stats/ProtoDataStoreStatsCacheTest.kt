@@ -13,11 +13,10 @@ import viach.apps.cache.util.TestStats
 
 @RunWith(AndroidJUnit4::class)
 class ProtoDataStoreStatsCacheTest {
-    private val defaultStats: StatsPreferences = StatsPreferences.getDefaultInstance()
 
     @Test
     fun all_returnsAllData() = runBlocking {
-        val cache = ProtoDataStoreStatsCache(TestStats(defaultStats))
+        val cache = ProtoDataStoreStatsCache(TestStats())
         cache.all.first().assertEqualsDefault()
     }
 
@@ -76,13 +75,14 @@ class ProtoDataStoreStatsCacheTest {
         setUpCache: StatsCache.() -> Unit,
         providePoints: TestStats.() -> Int
     ) {
-        val stats = TestStats(defaultStats)
+        val stats = TestStats()
         val cache = ProtoDataStoreStatsCache(stats)
         setUpCache(cache)
         assertEquals(1, providePoints(stats))
     }
 
     private fun StatsPreferences.assertEqualsDefault() {
+        val defaultStats = StatsPreferences.getDefaultInstance()
         if (easyModeWinsCount != defaultStats.easyModeWinsCount ||
                 easyModeLossesCount != defaultStats.easyModeLossesCount ||
                 normalModeWinsCount != defaultStats.normalModeWinsCount ||
