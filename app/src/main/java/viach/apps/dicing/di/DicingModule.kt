@@ -2,10 +2,8 @@ package viach.apps.dicing.di
 
 import org.koin.dsl.module
 import viach.apps.dicing.dicefactory.RandomDiceFactory
-import viach.apps.dicing.fieldcell.FieldCell
 import viach.apps.dicing.game.Game
 import viach.apps.dicing.game.TwoPlayersGame
-import viach.apps.dicing.gamefield.GameField
 import viach.apps.dicing.gamefield.SquareNineCellsGameField
 import viach.apps.dicing.model.GameType
 import viach.apps.dicing.player.FirstPlayer

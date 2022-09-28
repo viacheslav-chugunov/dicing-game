@@ -31,7 +31,7 @@ android {
 }
 
 dependencies {
-    implementation project(path: ':dicing')
+    implementation project(path: ':features:dicing')
     implementation "androidx.core:core-ktx:$android_core_version"
     testImplementation "junit:junit:$junit_version"
     androidTestImplementation "androidx.test.ext:junit:$junit_ext_version"

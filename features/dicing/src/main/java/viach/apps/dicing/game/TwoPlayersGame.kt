@@ -3,7 +3,6 @@ package viach.apps.dicing.game
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import viach.apps.dicing.gamefield.GameField
-import viach.apps.dicing.player.Player
 import viach.apps.dicing.dice.Dice
 import viach.apps.dicing.dicefactory.DiceFactory
 import viach.apps.dicing.gamefield.SquareNineCellsGameField

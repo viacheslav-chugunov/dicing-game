@@ -46,9 +46,9 @@ android {
 }
 
 dependencies {
-    implementation project(path: ':dicing')
-    implementation project(path: ':ai')
-    implementation project(path: ':cache')
+    implementation project(path: ':features:dicing')
+    implementation project(path: ':features:ai')
+    implementation project(path: ':features:cache')
     implementation "androidx.core:core-ktx:$android_core_version"
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.material:material:$compose_version"

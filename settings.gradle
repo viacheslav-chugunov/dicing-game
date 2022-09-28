@@ -14,6 +14,6 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Dicing"
 include ':app'
-include ':dicing'
-include ':ai'
-include ':cache'
+include ':features:dicing'
+include ':features:ai'
+include ':features:cache'

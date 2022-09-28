@@ -1,7 +1,6 @@
 package viach.apps.dicing.player
 
 import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
 
 interface Player: Parcelable {
     val position: Int
