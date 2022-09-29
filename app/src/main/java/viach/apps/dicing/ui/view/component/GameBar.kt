@@ -4,11 +4,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -24,37 +22,28 @@ fun GameBar(
     itemsClickable: Boolean = true,
     onPlaceDiceIntent: (position: Int) -> Unit
 ) {
-    var width by remember { mutableStateOf(0.dp) }
-    val itemSize = width / (rowCellsCount * rowCellsCount)
-
     Column(
         modifier = Modifier
-            .padding(layoutPadding)
             .fillMaxWidth()
-            .onSizeChanged { width = it.width.dp * 0.98f },
+            .padding(layoutPadding)
     ) {
         for (y in 0 until rowCellsCount) {
-            Row(modifier = Modifier.height(itemSize)) {
+            Row(modifier = Modifier.fillMaxWidth()) {
                 for (x in 0 until rowCellsCount) {
                     val position = y * 3 + x + 1
                     val dice = gameField.getDice(position)
-                    Row(
-                        modifier = Modifier.clickable(enabled = itemsClickable && gameField.isFree(position)) {
-                            onPlaceDiceIntent(position)
-                        },
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Icon(
-                            painter = painterResource(dice.iconRes),
-                            contentDescription = stringResource(dice.contentDescriptionRes),
-                            modifier = Modifier
-                                .size(itemSize)
-                                .padding(itemPadding)
-                                .rotate(iconRotation),
-                            tint = MaterialTheme.colors.primaryVariant
-                        )
-                    }
+                    val clickable = itemsClickable && gameField.isFree(position)
+                    Icon(
+                        painter = painterResource(dice.iconRes),
+                        contentDescription = stringResource(dice.contentDescriptionRes),
+                        modifier = Modifier
+                            .clickable(clickable) { onPlaceDiceIntent(position) }
+                            .weight(1f)
+                            .aspectRatio(1f)
+                            .padding(itemPadding)
+                            .rotate(iconRotation),
+                        tint = MaterialTheme.colors.primaryVariant
+                    )
                 }
             }
         }
