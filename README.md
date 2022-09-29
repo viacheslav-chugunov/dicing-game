@@ -3,9 +3,9 @@
 ## General
 A game where you can spend your free time playing against bots or your friends. You can challange a friend on only one device. Playing against AI, you can choose one of 3 difficulties: easy, normal or hard.
 <p align="center">
-  <img src="https://github.com/viacheslav-chugunov/dicing-game/blob/master/images/menu_preview.png" height="500" >
+  <img src="https://github.com/viacheslav-chugunov/dicing-game/blob/master/images/menu_preview.png" width="250" >
   <b>&nbsp</b>
-  <img src="https://github.com/viacheslav-chugunov/dicing-game/blob/master/images/game_preview.png" height="500" >
+  <img src="https://github.com/viacheslav-chugunov/dicing-game/blob/master/images/game_preview.png" width="250" >
 </p>
 
 ## Rules
